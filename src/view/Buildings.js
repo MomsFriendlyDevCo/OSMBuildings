@@ -41,7 +41,8 @@ View.Buildings = class {
 
     this.wallTexture = new GLX.texture.Image();
     this.wallTexture.color([1,1,1]);
-    this.wallTexture.load(BUILDING_TEXTURE);
+    // MFDC: Disable "glass windows" building texture
+    // this.wallTexture.load(BUILDING_TEXTURE);
   }
 
   render (depthFramebuffer) {
