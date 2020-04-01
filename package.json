@@ -23,17 +23,16 @@
   },
   "dependencies": {
     "parse-svg-path": "^0.1.2",
-    "qolor": "^2.2.1",
+    "qolor": "^2.3.3",
     "suncalc": "git://github.com/OSMBuildings/suncalc.git",
     "svg-path-contours": "^2.0.0"
   },
   "devDependencies": {
-    "documentation": "^5.3.0",
-    "eslint": "^5.16.0",
+    "documentation": "^12.1.4",
+    "eslint": "^6.8.0",
     "uglify-es": "github:mishoo/UglifyJS2#harmony",
-    "webpack": "^4.41.2",
-    "webpack-cli": "^3.3.10",
+    "webpack": "^4.42.0",
+    "webpack-cli": "^3.3.11",
     "zip-folder": "^1.0.0"
-  },
-  "optionalDependencies": {}
+  }
 }
