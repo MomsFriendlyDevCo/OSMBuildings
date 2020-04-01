@@ -107,6 +107,18 @@ function processGeoJSON (geojson, options) {
   geojson.features.forEach((feature, index) => {
     // APP.events.emit('loadfeature', feature); // TODO
 
+    // MFDC: Remove all GeoJSON provided material / color information
+    delete feature.properties.material;
+    delete feature.properties.color;
+    delete feature.properties.roofColor;
+    if (feature.properties.name == "Grosvenor Place") console.log('FEATURE GP', feature);
+
+    // MFDC: Fix issue where if properties.height is omitted the color doesn't render correctly
+    if (!feature.properties.height)
+      feature.properties.height = feature.properties.levels && feature.properties.levels > 0
+	? feature.properties.levels * 3 // Magic number is METERS_PER_LEVEL from src/triangulate/index.js
+	: 10; // Magic number is DEFAULT_HEIGHT from src/triangulate/index.js
+
     const
       properties = feature.properties,
       id = options.id || feature.id,
