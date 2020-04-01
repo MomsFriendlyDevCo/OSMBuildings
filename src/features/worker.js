@@ -111,7 +111,6 @@ function processGeoJSON (geojson, options) {
     delete feature.properties.material;
     delete feature.properties.color;
     delete feature.properties.roofColor;
-    if (feature.properties.name == "Grosvenor Place") console.log('FEATURE GP', feature);
 
     // MFDC: Fix issue where if properties.height is omitted the color doesn't render correctly
     if (!feature.properties.height)
