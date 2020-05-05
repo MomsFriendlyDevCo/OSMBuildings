@@ -137,6 +137,7 @@ class Grid {
   // }
 
   update () {
+    // FIXME: We might be using fixedZoom, move this below and test against `zoom`.
     if ((this.minZoom && APP.zoom < this.minZoom) || (this.maxZoom && APP.zoom > this.maxZoom)) {
       return;
     }
