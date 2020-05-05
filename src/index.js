@@ -81,8 +81,8 @@ class OSMBuildings {
     this.bounds = options.bounds;
 
     this.position = options.position || { latitude: -33.859939, longitude: 151.211175 };
-    this.zoom = options.zoom;
-    this.zoom = (!this.zoom && this.minZoom && this.maxZoom) ? (this.minZoom + (this.maxZoom - this.minZoom) / 2) : 20;
+    this.zoom = (this.minZoom && this.maxZoom) ? (this.minZoom + (this.maxZoom - this.minZoom) / 2) : 20;
+    this.zoom = options.zoom || this.zoom;
     this.rotation = options.rotation || 0;
     this.tilt = options.tilt || 0;
 
