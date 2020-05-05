@@ -75,17 +75,14 @@ class OSMBuildings {
 
     this.attribution = options.attribution || OSMBuildings.ATTRIBUTION;
 
-    this.minZoom = Math.max(parseFloat(options.minZoom || MIN_ZOOM), MIN_ZOOM);
-    this.maxZoom = Math.min(parseFloat(options.maxZoom || MAX_ZOOM), MAX_ZOOM);
-    if (this.maxZoom < this.minZoom) {
-      this.minZoom = MIN_ZOOM;
-      this.maxZoom = MAX_ZOOM;
-    }
+    this.minZoom = options.minZoom ? parseFloat(options.minZoom) : null;
+    this.maxZoom = options.maxZoom ? parseFloat(options.maxZoom) : null;
 
     this.bounds = options.bounds;
 
-    this.position = options.position || { latitude: 52.520000, longitude: 13.410000 };
-    this.zoom = options.zoom || (this.minZoom + (this.maxZoom - this.minZoom) / 2);
+    this.position = options.position || { latitude: -33.859939, longitude: 151.211175 };
+    this.zoom = options.zoom;
+    this.zoom = (!this.zoom && this.minZoom && this.maxZoom) ? (this.minZoom + (this.maxZoom - this.minZoom) / 2) : 20;
     this.rotation = options.rotation || 0;
     this.tilt = options.tilt || 0;
 
@@ -462,8 +459,8 @@ class OSMBuildings {
    * @param {Number} zoom The new zoom level
    */
   setZoom (zoom, e) {
-    zoom = Math.max(zoom, this.minZoom);
-    zoom = Math.min(zoom, this.maxZoom);
+    if (this.minZoom) zoom = Math.max(zoom, this.minZoom);
+    if (this.maxZoom) zoom = Math.min(zoom, this.maxZoom);
 
     if (this.zoom !== zoom) {
       this.zoom = zoom;

@@ -81,7 +81,7 @@ View.Buildings = class {
       // no visibility check needed, Grid.purge() is taking care
       // TODO: but not for individual features
 
-      if (APP.zoom < item.minZoom || APP.zoom > item.maxZoom) {
+      if ((item.minZoom && APP.zoom < item.minZoom) || (item.maxZoom && APP.zoom > item.maxZoom)) {
         return;
       }
 

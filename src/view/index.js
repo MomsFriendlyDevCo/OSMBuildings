@@ -46,87 +46,89 @@ class View {
   }
 
   renderFrame () {
-    if (APP.zoom >= APP.minZoom && APP.zoom <= APP.maxZoom) {
-      requestAnimationFrame(() => {
-
-        this.setupViewport();
-        GL.clearColor(this.fogColor[0], this.fogColor[1], this.fogColor[2], 0.0);
-        GL.clear(GL.COLOR_BUFFER_BIT | GL.DEPTH_BUFFER_BIT);
-
-        const viewSize = [APP.width, APP.height];
-
-        if (!this.shadowsEnabled) {
-          this.Buildings.render();
-          this.Markers.render();
-
-          GL.enable(GL.BLEND);
-
-          GL.blendFuncSeparate(GL.ONE_MINUS_DST_ALPHA, GL.DST_ALPHA, GL.ONE, GL.ONE);
-          GL.disable(GL.DEPTH_TEST);
-          this.Horizon.render();
-          GL.disable(GL.BLEND);
-          GL.enable(GL.DEPTH_TEST);
-
-          this.Basemap.render();
-        } else {
-          const viewTrapezoid = this.getViewQuad();
-
-          View.Sun.updateView(viewTrapezoid);
-          this.Horizon.updateGeometry(viewTrapezoid);
-
-          this.cameraGBuffer.render(this.viewMatrix, this.projMatrix, viewSize, true);
-          this.sunGBuffer.render(View.Sun.viewMatrix, View.Sun.projMatrix, [SHADOW_DEPTH_MAP_SIZE, SHADOW_DEPTH_MAP_SIZE]);
-          this.ambientMap.render(this.cameraGBuffer.framebuffer.depthTexture, this.cameraGBuffer.framebuffer.renderTexture, viewSize, 2.0);
-          this.blurredAmbientMap.render(this.ambientMap.framebuffer.renderTexture, viewSize);
-          this.Buildings.render(this.sunGBuffer.framebuffer);
-          this.Markers.render(this.sunGBuffer.framebuffer);
-          this.Basemap.render();
-
-          GL.enable(GL.BLEND);
-
-          // multiply DEST_COLOR by SRC_COLOR, keep SRC alpha
-          // this applies the shadow and SSAO effects (which selectively darken the scene)
-          // while keeping the alpha channel (that corresponds to how much the
-          // geometry should be blurred into the background in the next step) intact
-          GL.blendFuncSeparate(GL.ZERO, GL.SRC_COLOR, GL.ZERO, GL.ONE);
-
-          this.MapShadows.render(this.sunGBuffer.framebuffer, 0.5);
-          this.Overlay.render(this.blurredAmbientMap.framebuffer.renderTexture, viewSize);
-
-          // linear interpolation between the colors of the current framebuffer
-          // ( =building geometries) and of the sky. The interpolation factor
-          // is the geometry alpha value, which contains the 'foggyness' of each pixel
-          // the alpha interpolation functions is set to GL.ONE for both operands
-          // to ensure that the alpha channel will become 1.0 for each pixel after this
-          // operation, and thus the whole canvas is not rendered partially transparently
-          // over its background.
-          GL.blendFuncSeparate(GL.ONE_MINUS_DST_ALPHA, GL.DST_ALPHA, GL.ONE, GL.ONE);
-
-
-          GL.disable(GL.DEPTH_TEST);
-          this.Horizon.render();
-          GL.enable(GL.DEPTH_TEST);
-
-          GL.disable(GL.BLEND);
-
-          // this.hudRect.render( this.sunGBuffer.getFogNormalTexture(), config );
-        }
-
-        // APP.markers.updateMarkerView();
-
-        if (this.isFast) {
-          this.renderFrame();
-          // setTimeout(() => {
-          //   this.renderFrame();
-          // }, 5);
-        } else {
-          setTimeout(() => {
-            this.renderFrame();
-          }, 250);
-        }
-
-      }); // end requestAnimationFrame()
+    if ((APP.minZoom && APP.zoom < APP.minZoom) || (APP.maxZoom && APP.zoom > APP.maxZoom)) {
+      return;
     }
+
+    requestAnimationFrame(() => {
+
+      this.setupViewport();
+      GL.clearColor(this.fogColor[0], this.fogColor[1], this.fogColor[2], 0.0);
+      GL.clear(GL.COLOR_BUFFER_BIT | GL.DEPTH_BUFFER_BIT);
+
+      const viewSize = [APP.width, APP.height];
+
+      if (!this.shadowsEnabled) {
+        this.Buildings.render();
+        this.Markers.render();
+
+        GL.enable(GL.BLEND);
+
+        GL.blendFuncSeparate(GL.ONE_MINUS_DST_ALPHA, GL.DST_ALPHA, GL.ONE, GL.ONE);
+        GL.disable(GL.DEPTH_TEST);
+        this.Horizon.render();
+        GL.disable(GL.BLEND);
+        GL.enable(GL.DEPTH_TEST);
+
+        this.Basemap.render();
+      } else {
+        const viewTrapezoid = this.getViewQuad();
+
+        View.Sun.updateView(viewTrapezoid);
+        this.Horizon.updateGeometry(viewTrapezoid);
+
+        this.cameraGBuffer.render(this.viewMatrix, this.projMatrix, viewSize, true);
+        this.sunGBuffer.render(View.Sun.viewMatrix, View.Sun.projMatrix, [SHADOW_DEPTH_MAP_SIZE, SHADOW_DEPTH_MAP_SIZE]);
+        this.ambientMap.render(this.cameraGBuffer.framebuffer.depthTexture, this.cameraGBuffer.framebuffer.renderTexture, viewSize, 2.0);
+        this.blurredAmbientMap.render(this.ambientMap.framebuffer.renderTexture, viewSize);
+        this.Buildings.render(this.sunGBuffer.framebuffer);
+        this.Markers.render(this.sunGBuffer.framebuffer);
+        this.Basemap.render();
+
+        GL.enable(GL.BLEND);
+
+        // multiply DEST_COLOR by SRC_COLOR, keep SRC alpha
+        // this applies the shadow and SSAO effects (which selectively darken the scene)
+        // while keeping the alpha channel (that corresponds to how much the
+        // geometry should be blurred into the background in the next step) intact
+        GL.blendFuncSeparate(GL.ZERO, GL.SRC_COLOR, GL.ZERO, GL.ONE);
+
+        this.MapShadows.render(this.sunGBuffer.framebuffer, 0.5);
+        this.Overlay.render(this.blurredAmbientMap.framebuffer.renderTexture, viewSize);
+
+        // linear interpolation between the colors of the current framebuffer
+        // ( =building geometries) and of the sky. The interpolation factor
+        // is the geometry alpha value, which contains the 'foggyness' of each pixel
+        // the alpha interpolation functions is set to GL.ONE for both operands
+        // to ensure that the alpha channel will become 1.0 for each pixel after this
+        // operation, and thus the whole canvas is not rendered partially transparently
+        // over its background.
+        GL.blendFuncSeparate(GL.ONE_MINUS_DST_ALPHA, GL.DST_ALPHA, GL.ONE, GL.ONE);
+
+
+        GL.disable(GL.DEPTH_TEST);
+        this.Horizon.render();
+        GL.enable(GL.DEPTH_TEST);
+
+        GL.disable(GL.BLEND);
+
+        // this.hudRect.render( this.sunGBuffer.getFogNormalTexture(), config );
+      }
+
+      // APP.markers.updateMarkerView();
+
+      if (this.isFast) {
+        this.renderFrame();
+        // setTimeout(() => {
+        //   this.renderFrame();
+        // }, 5);
+      } else {
+        setTimeout(() => {
+          this.renderFrame();
+        }, 250);
+      }
+
+    }); // end requestAnimationFrame()
   }
 
   // initialize view and projection matrix, fog distance, etc.

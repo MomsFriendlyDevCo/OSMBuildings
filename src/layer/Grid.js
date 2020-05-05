@@ -11,13 +11,8 @@ class Grid {
     this.fixedZoom = options.fixedZoom;
 
     this.bounds = options.bounds || { w: -180, s: -90, e: 180, n: 90 };
-    this.minZoom = Math.max(parseFloat(options.minZoom || APP.minZoom), APP.minZoom);
-    this.maxZoom = Math.min(parseFloat(options.maxZoom || APP.maxZoom), APP.maxZoom);
-
-    if (this.maxZoom < this.minZoom) {
-      this.minZoom = APP.minZoom;
-      this.maxZoom = APP.maxZoom;
-    }
+    this.minZoom = options.minZoom ? parseFloat(options.minZoom) : null;
+    this.maxZoom = options.maxZoom ? parseFloat(options.maxZoom) : null;
 
     this.queue = [];
     // TODO: should be more flexible, also connected to # of webworkers, could increase when idle
@@ -142,7 +137,7 @@ class Grid {
   // }
 
   update () {
-    if (APP.zoom < this.minZoom || APP.zoom > this.maxZoom) {
+    if ((this.minZoom && APP.zoom < this.minZoom) || (this.maxZoom && APP.zoom > this.maxZoom)) {
       return;
     }
 

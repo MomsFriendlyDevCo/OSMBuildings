@@ -13,13 +13,8 @@ class Feature {
     this.scale(options.scale || 1);
     this.rotate(options.rotation || 0);
 
-    this.minZoom = Math.max(parseFloat(options.minZoom || MIN_ZOOM), APP.minZoom);
-    this.maxZoom = Math.min(parseFloat(options.maxZoom || MAX_ZOOM), APP.maxZoom);
-
-    if (this.maxZoom < this.minZoom) {
-      this.minZoom = MIN_ZOOM;
-      this.maxZoom = MAX_ZOOM;
-    }
+    this.minZoom = options.minZoom ? parseFloat(options.minZoom) : null;
+    this.maxZoom = options.maxZoom ? parseFloat(options.maxZoom) : null;
 
     this.load(url);
   }

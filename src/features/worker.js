@@ -109,6 +109,7 @@ function processGeoJSON (geojson, options) {
 
     // MFDC: Remove all GeoJSON provided material / color information
     delete feature.properties.material;
+    // TODO: Re-enable colors for polygons, implement a switch for whitewash.
     delete feature.properties.color;
     delete feature.properties.roofColor;
 

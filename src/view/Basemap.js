@@ -16,7 +16,7 @@ View.Basemap = class {
       return;
     }
 
-    if (APP.zoom < layer.minZoom || APP.zoom > layer.maxZoom) {
+    if ((layer.minZoom && APP.zoom < layer.minZoom) || (layer.maxZoom && APP.zoom > layer.maxZoom)) {
       return;
     }
 

@@ -46,7 +46,7 @@ View.DepthNormal = class {
     const features = APP.features.items.concat([this.mapPlane]);
 
     features.forEach(item => {
-      if (APP.zoom < item.minZoom || APP.zoom > item.maxZoom) {
+      if ((item.minZoom && APP.zoom < item.minZoom) || (item.maxZoom && APP.zoom > item.maxZoom)) {
         return;
       }
 
